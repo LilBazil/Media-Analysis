@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Проверка данных — МедиаИнсайт AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07101d">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading-game.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+</head>
+<body>
+<div class="page-glow page-glow-one"></div>
+<div class="page-glow page-glow-two"></div>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-mark">MI</div>
+        <div>
+            <div class="brand-title">МедиаИнсайт AI</div>
+            <div class="brand-subtitle">проверка данных перед анализом</div>
+        </div>
+    </div>
+
+    <a class="topbar-link" href="{{ url_for('index') }}">Выбрать другой файл</a>
+</header>
+
+<main class="container wide">
+    <section class="report-hero compact-hero">
+        <div>
+            <div class="hero-badge">Предпросмотр</div>
+            <h1>Проверьте данные перед запуском</h1>
+            <p>
+                Анализ ещё не начался. Посмотрите, правильно ли прочитан файл,
+                и подтвердите запуск только если всё верно.
+            </p>
+        </div>
+    </section>
+
+    {% if warnings %}
+        <section class="alert warning-alert">
+            {% for warning in warnings %}
+                <p>{{ warning }}</p>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <p>Файл</p>
+            <strong>{{ dataset_name }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <p>Размер</p>
+            <strong>{{ shape[0] }} × {{ shape[1] }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <p>Колонки</p>
+            <strong>{{ columns|length }}</strong>
+        </div>
+
+        <div class="stat-card">
+            <p>Статус</p>
+            <strong>готов к проверке</strong>
+        </div>
+    </section>
+
+    <section class="card-dark">
+        <div class="card-header">
+            <div>
+                <h2>Что нужно проанализировать</h2>
+                <p>Эта инструкция будет использована при построении отчёта.</p>
+            </div>
+        </div>
+
+        <p class="plain-text">{{ instruction }}</p>
+    </section>
+
+    <section class="card-dark">
+        <div class="card-header">
+            <div>
+                <h2>Предпросмотр таблицы</h2>
+                <p>
+                    Ниже показаны только первые строки. После подтверждения анализ будет выполнен
+                    по всему датасету.
+                </p>
+            </div>
+        </div>
+
+        <div class="columns-box">
+            {% for column in columns %}
+                <span>{{ column }}</span>
+            {% endfor %}
+        </div>
+
+        <div class="table-wrap preview-table-wrap">
+            {{ preview_html|safe }}
+        </div>
+    </section>
+
+    <section class="confirm-panel">
+        <div>
+            <h2>Файл выбран правильно?</h2>
+            <p>
+                Если это нужные данные, запускайте анализ. Если файл выбран случайно,
+                вернитесь назад и загрузите другой.
+            </p>
+        </div>
+
+        <form method="post" action="{{ url_for('analyze') }}" id="confirm-form">
+            <input type="hidden" name="session_id" value="{{ session_id }}">
+            <input type="hidden" name="dataset_path" value="{{ dataset_path }}">
+            <input type="hidden" name="dataset_name" value="{{ dataset_name }}">
+            <input type="hidden" name="instruction" value="{{ instruction }}">
+
+            <button type="submit" class="submit-button confirm-button" id="confirm-btn">
+                Запустить анализ
+                <span>→</span>
+            </button>
+        </form>
+    </section>
+</main>
+
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-panel smart-loading">
+        <div class="loading-head">
+            <div class="loader big"></div>
+            <div>
+                <h2>Анализ выполняется</h2>
+                <p>
+                    Идёт работа с полным датасетом. Время зависит от размера таблицы,
+                    выбранной модели и скорости ответа API.
+                </p>
+            </div>
+        </div>
+
+        <div class="waiting-stats">
+            <div>
+                <span>Прошло времени</span>
+                <strong id="elapsed-time">00:00</strong>
+            </div>
+            <div>
+                <span>Строки</span>
+                <strong>{{ shape[0] }}</strong>
+            </div>
+            <div>
+                <span>Колонки</span>
+                <strong>{{ shape[1] }}</strong>
+            </div>
+        </div>
+
+        <div class="analysis-note" id="analysis-note">
+            Обычно дольше всего формируется итоговый отчёт. Это нормально, если страница не меняется несколько минут.
+        </div>
+
+        <div class="analysis-checklist">
+            <div><span></span> Агент изучает структуру и качество данных</div>
+            <div><span></span> Считает подходящие метрики по всему DataFrame</div>
+            <div><span></span> Готовит визуализации и итоговые рекомендации</div>
+        </div>
+
+        <button type="button" class="mini-game-toggle" id="game-toggle">
+            Играть, пока идёт анализ
+        </button>
+
+        <div class="mini-game" id="mini-game">
+            <canvas id="game-canvas" width="560" height="190"></canvas>
+            <p>
+                Пробел или клик — прыжок. Стрелка вниз / S — пригнуться под верхним препятствием.
+                Игра необязательна и не влияет на анализ.
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const form = document.getElementById("confirm-form");
+    const overlay = document.getElementById("loading-overlay");
+    const confirmBtn = document.getElementById("confirm-btn");
+    const elapsedTime = document.getElementById("elapsed-time");
+    const analysisNote = document.getElementById("analysis-note");
+
+    let startedAt = 0;
+    let timerId = null;
+
+    function formatSeconds(totalSeconds) {
+        const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+        const seconds = String(totalSeconds % 60).padStart(2, "0");
+        return `${minutes}:${seconds}`;
+    }
+
+    form.addEventListener("submit", function () {
+        overlay.style.display = "flex";
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = "Анализ запущен <span>…</span>";
+
+        startedAt = Date.now();
+        timerId = setInterval(() => {
+            const seconds = Math.floor((Date.now() - startedAt) / 1000);
+            elapsedTime.innerText = formatSeconds(seconds);
+
+            if (seconds > 90) {
+                analysisNote.innerText = "Если анализ длится дольше обычного, скорее всего модель формирует финальный отчёт или строит графики.";
+            }
+        }, 1000);
+    });
+
+    const gameToggle = document.getElementById("game-toggle");
+    const game = document.getElementById("mini-game");
+    const canvas = document.getElementById("game-canvas");
+    const ctx = canvas.getContext("2d");
+
+    let gameStarted = false;
+    let alive = true;
+    let score = 0;
+    let bestScore = Number(localStorage.getItem("mediaInsightBestScore") || 0);
+    let frame = 0;
+    let speed = 3.2;
+    let obstacleGap = 180;
+    let obstacles = [];
+    let keys = { down: false };
+
+    const groundY = 152;
+    const player = {
+        x: 58,
+        y: groundY - 28,
+        width: 26,
+        height: 28,
+        normalHeight: 28,
+        duckHeight: 16,
+        velocityY: 0,
+        onGround: true
+    };
+
+    function randomBetween(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function spawnObstacle() {
+        const isFlying = Math.random() < 0.35 && score > 2;
+
+        if (isFlying) {
+            obstacles.push({
+                x: canvas.width + 20,
+                y: randomBetween(82, 100),
+                width: randomBetween(28, 42),
+                height: 16,
+                type: "flying"
+            });
+        } else {
+            const height = randomBetween(22, 42);
+            obstacles.push({
+                x: canvas.width + 20,
+                y: groundY - height,
+                width: randomBetween(16, 30),
+                height: height,
+                type: "ground"
+            });
+        }
+
+        obstacleGap = randomBetween(135, 255);
+    }
+
+    function jump() {
+        if (!gameStarted || !alive) return;
+
+        if (player.onGround) {
+            player.velocityY = -10.2;
+            player.onGround = false;
+        }
+    }
+
+    function resetGame() {
+        alive = true;
+        score = 0;
+        frame = 0;
+        speed = 3.2;
+        obstacleGap = 160;
+        obstacles = [];
+        player.y = groundY - player.normalHeight;
+        player.height = player.normalHeight;
+        player.velocityY = 0;
+        player.onGround = true;
+        spawnObstacle();
+    }
+
+    function rectsCollide(a, b) {
+        return a.x < b.x + b.width &&
+            a.x + a.width > b.x &&
+            a.y < b.y + b.height &&
+            a.y + a.height > b.y;
+    }
+
+    function drawRoundedRect(x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    function drawGame() {
+        if (!gameStarted) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#0B1020";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        bgGradient.addColorStop(0, "rgba(0,201,255,0.10)");
+        bgGradient.addColorStop(1, "rgba(146,254,157,0.08)");
+        ctx.fillStyle = bgGradient;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.14)";
+        ctx.beginPath();
+        ctx.moveTo(0, groundY + 1);
+        ctx.lineTo(canvas.width, groundY + 1);
+        ctx.stroke();
+
+        if (alive) {
+            frame += 1;
+            speed = Math.min(5.2, 3.2 + score * 0.035);
+
+            player.height = keys.down && player.onGround ? player.duckHeight : player.normalHeight;
+            player.velocityY += 0.48;
+            player.y += player.velocityY;
+
+            if (player.y + player.height >= groundY) {
+                player.y = groundY - player.height;
+                player.velocityY = 0;
+                player.onGround = true;
+            }
+
+            obstacles.forEach(obstacle => obstacle.x -= speed);
+            obstacles = obstacles.filter(obstacle => obstacle.x + obstacle.width > -20);
+
+            const lastObstacle = obstacles[obstacles.length - 1];
+            if (!lastObstacle || lastObstacle.x < canvas.width - obstacleGap) {
+                spawnObstacle();
+            }
+
+            obstacles.forEach(obstacle => {
+                if (!obstacle.passed && obstacle.x + obstacle.width < player.x) {
+                    obstacle.passed = true;
+                    score += 1;
+                }
+
+                if (rectsCollide(player, obstacle)) {
+                    alive = false;
+                    bestScore = Math.max(bestScore, score);
+                    localStorage.setItem("mediaInsightBestScore", String(bestScore));
+                }
+            });
+        }
+
+        const playerGradient = ctx.createLinearGradient(player.x, player.y, player.x + player.width, player.y + player.height);
+        playerGradient.addColorStop(0, "#92FE9D");
+        playerGradient.addColorStop(1, "#00C9FF");
+        ctx.fillStyle = playerGradient;
+        drawRoundedRect(player.x, player.y, player.width, player.height, 8);
+
+        obstacles.forEach(obstacle => {
+            ctx.fillStyle = obstacle.type === "flying" ? "#A78BFA" : "#00C9FF";
+            drawRoundedRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height, 6);
+        });
+
+        ctx.fillStyle = "#CBD5E1";
+        ctx.font = "14px Inter, Arial";
+        ctx.fillText("Счёт: " + score, 16, 25);
+        ctx.fillText("Рекорд: " + bestScore, 16, 45);
+
+        if (!alive) {
+            ctx.fillStyle = "rgba(5,9,16,0.78)";
+            drawRoundedRect(132, 58, 300, 72, 18);
+            ctx.fillStyle = "#F8FAFC";
+            ctx.font = "18px Inter, Arial";
+            ctx.fillText("Столкновение", 222, 88);
+            ctx.font = "13px Inter, Arial";
+            ctx.fillText("Кликните по полю, чтобы начать заново", 164, 112);
+        }
+
+        requestAnimationFrame(drawGame);
+    }
+
+    gameToggle.addEventListener("click", function () {
+        game.style.display = "block";
+
+        if (!gameStarted) {
+            gameStarted = true;
+            resetGame();
+            drawGame();
+        }
+    });
+
+    canvas.addEventListener("click", function () {
+        if (!gameStarted) return;
+
+        if (!alive) {
+            resetGame();
+        } else {
+            jump();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.code === "Space") {
+            event.preventDefault();
+            jump();
+        }
+
+        if (event.code === "ArrowDown" || event.code === "KeyS") {
+            keys.down = true;
+        }
+    });
+
+    document.addEventListener("keyup", function (event) {
+        if (event.code === "ArrowDown" || event.code === "KeyS") {
+            keys.down = false;
+        }
+    });
+</script>
+</body>
+</html>

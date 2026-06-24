@@ -1,0 +1,117 @@
+.page-glow {
+    position: fixed;
+    width: 420px;
+    height: 420px;
+    border-radius: 999px;
+    filter: blur(90px);
+    opacity: 0.28;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.page-glow-one {
+    left: -120px;
+    top: 120px;
+    background: var(--accent-b);
+}
+
+.page-glow-two {
+    right: -130px;
+    top: 80px;
+    background: var(--accent-a);
+}
+
+.topbar {
+    width: min(1180px, calc(100% - 32px));
+    margin: 24px auto 0;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid var(--border);
+    background: rgba(8, 13, 24, 0.76);
+    backdrop-filter: blur(18px);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+}
+
+.container {
+    width: min(1180px, calc(100% - 32px));
+    margin: 28px auto 60px;
+}
+
+.container.wide {
+    width: min(1240px, calc(100% - 32px));
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.info-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr 0.8fr 0.8fr;
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.hint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 18px 0 30px;
+}
+
+.report-layout {
+    width: min(1380px, calc(100% - 32px));
+    margin: 28px auto 70px;
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.report-content {
+    min-width: 0;
+}
+
+.sidebar {
+    position: sticky;
+    top: 24px;
+    border: 1px solid var(--border);
+    background: rgba(8, 13, 24, 0.84);
+    backdrop-filter: blur(18px);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+}
+
+.sidebar-title {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 11px 12px;
+    color: var(--muted-2);
+    text-decoration: none;
+    border-radius: 14px;
+    margin-bottom: 6px;
+}
+
+.sidebar a:hover {
+    color: #07101d;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+}

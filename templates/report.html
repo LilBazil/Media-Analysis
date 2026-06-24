@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Отчёт анализа — МедиаИнсайт AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07101d">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading-game.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+</head>
+<body>
+<div class="page-glow page-glow-one"></div>
+<div class="page-glow page-glow-two"></div>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-mark">MI</div>
+        <div>
+            <div class="brand-title">МедиаИнсайт AI</div>
+            <div class="brand-subtitle">результаты анализа</div>
+        </div>
+    </div>
+
+    <a class="topbar-link" href="{{ url_for('index') }}">Новый анализ</a>
+</header>
+
+<main class="report-layout">
+    <aside class="sidebar">
+        <div class="sidebar-title">Разделы</div>
+        <a href="#summary">Краткий результат</a>
+        <a href="#charts">Графики</a>
+        <a href="#dataset">Данные</a>
+        <a href="#full-report">Полный отчёт</a>
+        <a href="#agent-log">Журнал действий</a>
+        <a href="#export">Сохранение</a>
+    </aside>
+
+    <section class="report-content">
+        <section class="report-hero compact-hero">
+            <div>
+                <div class="hero-badge">Готово</div>
+                <h1>Результаты анализа</h1>
+                <p>
+                    Сначала показаны основные выводы. Графики, данные, полный текст отчёта
+                    и журнал действий можно посмотреть ниже.
+                </p>
+            </div>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <p>Файл</p>
+                <strong>{{ dataset_name }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <p>Размер</p>
+                <strong>{{ shape[0] }} × {{ shape[1] }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <p>Шаги анализа</p>
+                <strong>{{ python_steps }}</strong>
+            </div>
+
+            <div class="stat-card">
+                <p>Графики</p>
+                <strong>{{ chart_files|length }}</strong>
+            </div>
+        </section>
+
+        <section class="card-dark accent-card" id="summary">
+            <div class="card-header">
+                <div>
+                    <h2>Краткий результат</h2>
+                    <p>Главные выводы без технических деталей.</p>
+                </div>
+            </div>
+
+            <div class="request-box">
+                <strong>Задача</strong>
+                <p>{{ instruction }}</p>
+            </div>
+
+            <div class="result-cards-grid">
+                {% for card in result_cards %}
+                    <article class="result-card">
+                        <span>{{ loop.index }}</span>
+                        <h3>{{ card.title }}</h3>
+                        <p>{{ card.text }}</p>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="card-dark" id="charts">
+            <div class="card-header">
+                <div>
+                    <h2>Графики</h2>
+                    <p>Визуальные результаты анализа.</p>
+                </div>
+            </div>
+
+            {% if chart_files %}
+                <div class="charts-grid">
+                    {% for chart in chart_files %}
+                        <figure class="chart-frame">
+                            <img src="{{ url_for('static', filename=chart) }}" alt="График анализа">
+                        </figure>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="plain-text">
+                    Графики не были созданы для этого датасета. Такое возможно, если в файле нет числовых колонок.
+                </p>
+            {% endif %}
+        </section>
+
+        <section class="card-dark" id="dataset">
+            <details>
+                <summary class="details-title">
+                    <span>Данные и предпросмотр</span>
+                    <b>развернуть</b>
+                </summary>
+
+                <div class="details-content">
+                    <p class="plain-text">
+                        Показаны первые строки. Полный файл использовался в анализе,
+                        но не выводится целиком, чтобы страница оставалась удобной.
+                    </p>
+
+                    <div class="columns-box">
+                        {% for column in columns %}
+                            <span>{{ column }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="table-wrap preview-table-wrap">
+                        {{ preview_html|safe }}
+                    </div>
+                </div>
+            </details>
+        </section>
+
+        <section class="card-dark" id="full-report">
+            <details open>
+                <summary class="details-title">
+                    <span>Полный текст отчёта</span>
+                    <b>свернуть / развернуть</b>
+                </summary>
+
+                <div class="details-content">
+                    <div class="report-text">
+                        {{ report_html|safe }}
+                    </div>
+                </div>
+            </details>
+        </section>
+
+        <section class="card-dark" id="agent-log">
+            <details>
+                <summary class="details-title">
+                    <span>Журнал действий</span>
+                    <b>развернуть</b>
+                </summary>
+
+                <div class="details-content">
+                    <p class="plain-text">
+                        Этот раздел нужен для проверки задания: здесь видно,
+                        какие шаги выполнялись во время анализа.
+                    </p>
+
+                    {% if parse_errors > 0 %}
+                        <div class="warning-pill inside">Ошибки формата: {{ parse_errors }}</div>
+                    {% endif %}
+
+                    {% if action_log %}
+                        <div class="timeline">
+                            {% for item in action_log %}
+                                <details class="timeline-item">
+                                    <summary>
+                                        <span>Шаг {{ item.step }}</span>
+                                        <strong>{{ item.tool }}</strong>
+                                    </summary>
+
+                                    <div class="timeline-content">
+                                        {% if item.reason %}
+                                            <p><b>Причина:</b> {{ item.reason }}</p>
+                                        {% endif %}
+
+                                        {% if item.code %}
+                                            <p><b>Код:</b></p>
+                                            <pre>{{ item.code }}</pre>
+                                        {% endif %}
+
+                                        {% if item.result %}
+                                            <p><b>Результат:</b></p>
+                                            <pre>{{ item.result }}</pre>
+                                        {% endif %}
+
+                                        {% if item.content %}
+                                            <p><b>Содержимое:</b></p>
+                                            <pre>{{ item.content }}</pre>
+                                        {% endif %}
+                                    </div>
+                                </details>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="plain-text">Журнал действий пуст.</p>
+                    {% endif %}
+                </div>
+            </details>
+        </section>
+
+        <section class="card-dark" id="export">
+            <div class="card-header">
+                <div>
+                    <h2>Сохранение результата</h2>
+                    <p>
+                        Скачайте отчёт, чтобы приложить его к README, отчёту по заданию
+                        или сохранить для повторной проверки.
+                    </p>
+                </div>
+            </div>
+
+            <div class="export-actions">
+                <a class="btn btn-primary" href="{{ url_for('download_report', session_id=session_id, file_type='txt') }}">
+                    Скачать TXT
+                </a>
+
+                <a class="btn btn-secondary" href="{{ url_for('download_report', session_id=session_id, file_type='json') }}">
+                    Скачать JSON
+                </a>
+            </div>
+        </section>
+
+        <section class="final-card">
+            <div>
+                <h2>Можно проверить другой сценарий</h2>
+                <p>
+                    Попробуйте загрузить собственный датасет, изменить инструкцию
+                    или сравнить результат на другом наборе данных.
+                </p>
+            </div>
+
+            <a class="btn btn-primary" href="{{ url_for('index') }}">Новый анализ</a>
+        </section>
+    </section>
+</main>
+</body>
+</html>

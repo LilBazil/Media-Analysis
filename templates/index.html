@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>МедиаИнсайт AI — агентный анализ данных</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#07101d">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loading-game.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+</head>
+<body>
+<div class="page-glow page-glow-one"></div>
+<div class="page-glow page-glow-two"></div>
+
+<header class="topbar">
+    <div class="brand">
+        <div class="brand-mark">MI</div>
+        <div>
+            <div class="brand-title">МедиаИнсайт AI</div>
+            <div class="brand-subtitle">Creative & Media Data Analyst</div>
+        </div>
+    </div>
+
+    <a class="topbar-link" href="#analysis-form">Начать анализ</a>
+</header>
+
+<main class="container">
+    <section class="hero-grid">
+        <div class="hero-card">
+            <div class="hero-badge">CSV/XLSX + ваш контекст</div>
+
+            <h1>Найдите сильные идеи, слабые места и точки роста в данных</h1>
+
+            <p class="hero-text">
+                Загрузите таблицу с проектами, публикациями, рекламой, отзывами или другой аналитикой.
+                Сервис покажет предпросмотр, а после подтверждения агент сам выберет расчёты,
+                построит графики и подготовит отчёт по всему датасету.
+            </p>
+
+            <div class="hero-actions">
+                <a href="#analysis-form" class="btn btn-primary">Загрузить датасет</a>
+                <a href="#how-it-works" class="btn btn-secondary">Как это работает</a>
+            </div>
+
+            <div class="hero-metrics">
+                <div>
+                    <span>Любой CSV/XLSX</span>
+                    <p>не только демо-файл</p>
+                </div>
+                <div>
+                    <span>Своя задача</span>
+                    <p>инструкция к анализу</p>
+                </div>
+                <div>
+                    <span>Отчёт</span>
+                    <p>выводы, графики, рекомендации</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="process-panel">
+            <div class="process-panel-header">
+                <h2>Как получить отчёт</h2>
+            </div>
+
+            <div class="process-line">
+                <div class="process-step-card active">
+                    <div class="process-number">01</div>
+                    <div>
+                        <h3>Загрузите данные</h3>
+                        <p>
+                            Выберите свой CSV/XLSX или один из двух демо-датасетов с разной структурой колонок.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step-card">
+                    <div class="process-number">02</div>
+                    <div>
+                        <h3>Добавьте контекст</h3>
+                        <p>
+                            Напишите, что важно найти: сильные стороны, слабые места, метрики, категории или аномалии.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step-card">
+                    <div class="process-number">03</div>
+                    <div>
+                        <h3>Проверьте файл</h3>
+                        <p>
+                            Перед запуском будет показан размер, список колонок и первые строки таблицы.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="process-step-card">
+                    <div class="process-number">04</div>
+                    <div>
+                        <h3>Получите результат</h3>
+                        <p>
+                            На странице отчёта будут выводы, графики, рекомендации и журнал действий агента.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data" action="{{ url_for('preview') }}" class="analysis-card" id="analysis-form">
+        <div class="section-heading">
+            <span>1</span>
+            <div>
+                <h2>Выберите данные</h2>
+                <p>
+                    Можно загрузить свой файл или использовать один из демо-датасетов,
+                    чтобы проверить работу приложения.
+                </p>
+            </div>
+        </div>
+
+        <label class="upload-zone" id="upload-zone">
+            <input type="file" name="dataset" id="dataset-input" accept=".csv,.xlsx">
+
+            <div class="upload-icon">↑</div>
+
+            <h3 id="upload-title">Нажмите, чтобы выбрать CSV/XLSX</h3>
+            <p id="upload-subtitle">или перетащите файл сюда. Максимум {{ max_upload_mb }} МБ.</p>
+        </label>
+
+        <label class="switch-row demo-switch-row">
+            <input type="checkbox" name="use_demo" id="use-demo">
+            <span class="switch-fake"></span>
+
+            <div>
+                <strong>Использовать демо-датасет</strong>
+                <p>Подходит, чтобы проверить проект без своего файла.</p>
+            </div>
+        </label>
+
+        <div class="demo-dataset-box" id="demo-dataset-box">
+            <label for="demo-dataset-select">Выберите демо-датасет:</label>
+
+            <select name="demo_dataset" id="demo-dataset-select" class="select-input">
+                {% for key, demo in demo_datasets.items() %}
+                    <option value="{{ key }}" data-description="{{ demo.description }}" data-instruction="{{ demo.instruction }}">
+                        {{ demo.label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <p id="demo-description">
+                {{ demo_datasets["portfolio"].description }}
+            </p>
+        </div>
+
+        <div class="hint-grid">
+            <div class="hint-card">
+                <strong>Можно загрузить любой CSV/XLSX</strong>
+                <p>
+                    Таблица не обязана совпадать с демо-структурой. Агент сначала изучит колонки,
+                    типы данных и доступные признаки.
+                </p>
+            </div>
+
+            <div class="hint-card">
+                <strong>Примеры подходящих данных</strong>
+                <p>
+                    Портфолио, публикации, рекламные кампании, отзывы, продажи,
+                    задачи, контент-план или метрики проекта.
+                </p>
+            </div>
+        </div>
+
+        <div class="section-heading">
+            <span>2</span>
+            <div>
+                <h2>Опишите задачу</h2>
+                <p>
+                    Инструкция помогает агенту понять, какие выводы и метрики важнее именно для вас.
+                </p>
+            </div>
+        </div>
+
+        <textarea name="instruction" rows="6" id="instruction-textarea">{{ default_instruction }}</textarea>
+
+        <div class="instruction-examples">
+            <button type="button" data-text="Найди ключевые закономерности, сильные и слабые места, аномалии и дай практические рекомендации.">
+                Универсальный анализ
+            </button>
+
+            <button type="button" data-text="Определи, какие категории, форматы или группы дают лучшие результаты, а какие требуют доработки.">
+                Категории и форматы
+            </button>
+
+            <button type="button" data-text="Найди недооценённые элементы: хорошие показатели вовлечённости при низком охвате или слабом продвижении.">
+                Недооценённые элементы
+            </button>
+        </div>
+
+        <button type="submit" class="submit-button" id="submit-btn">
+            Проверить данные
+            <span>→</span>
+        </button>
+    </form>
+
+    <section class="info-grid" id="how-it-works">
+        <div class="info-card">
+            <div class="info-icon">01</div>
+            <h3>Не один шаблон</h3>
+            <p>
+                Два демо-файла имеют разную структуру, а пользователь может загрузить свой датасет.
+            </p>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">02</div>
+            <h3>Агентный анализ</h3>
+            <p>
+                Модель вызывает Python-инструмент и анализирует полный DataFrame, а не пересказывает готовые метрики.
+            </p>
+        </div>
+
+        <div class="info-card">
+            <div class="info-icon">03</div>
+            <h3>Проверяемость</h3>
+            <p>
+                Журнал действий показывает Python-шаги агента: структуру данных, расчёты, графики и отчёт.
+            </p>
+        </div>
+    </section>
+</main>
+
+<script>
+    const fileInput = document.getElementById("dataset-input");
+    const uploadTitle = document.getElementById("upload-title");
+    const uploadSubtitle = document.getElementById("upload-subtitle");
+    const useDemo = document.getElementById("use-demo");
+    const textarea = document.getElementById("instruction-textarea");
+    const exampleButtons = document.querySelectorAll(".instruction-examples button");
+    const submitBtn = document.getElementById("submit-btn");
+    const demoBox = document.getElementById("demo-dataset-box");
+    const demoSelect = document.getElementById("demo-dataset-select");
+    const demoDescription = document.getElementById("demo-description");
+    const defaultInstruction = {{ default_instruction|tojson }};
+
+    function updateDemoInfo() {
+        const selectedOption = demoSelect.options[demoSelect.selectedIndex];
+        demoDescription.innerText = selectedOption.dataset.description;
+
+        if (useDemo.checked) {
+            textarea.value = selectedOption.dataset.instruction;
+            uploadTitle.innerText = "Будет использован демо-датасет";
+            uploadSubtitle.innerText = selectedOption.text.trim() + ". Загрузка файла не обязательна.";
+        }
+    }
+
+    fileInput.addEventListener("change", function () {
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const allowed = [".csv", ".xlsx"];
+            const lowerName = file.name.toLowerCase();
+            const isAllowed = allowed.some(ext => lowerName.endsWith(ext));
+
+            useDemo.checked = false;
+            demoBox.style.display = "none";
+
+            if (!isAllowed) {
+                uploadTitle.innerText = "Неверный формат файла";
+                uploadSubtitle.innerText = "Поддерживаются только CSV и XLSX.";
+                submitBtn.disabled = true;
+                return;
+            }
+
+            uploadTitle.innerText = file.name;
+            uploadSubtitle.innerText = "Файл выбран. Далее будет показан предпросмотр.";
+            submitBtn.disabled = false;
+        }
+    });
+
+    useDemo.addEventListener("change", function () {
+        if (useDemo.checked) {
+            fileInput.value = "";
+            demoBox.style.display = "block";
+            submitBtn.disabled = false;
+            updateDemoInfo();
+        } else {
+            demoBox.style.display = "none";
+            uploadTitle.innerText = "Нажмите, чтобы выбрать CSV/XLSX";
+            uploadSubtitle.innerText = "или перетащите файл сюда. Максимум {{ max_upload_mb }} МБ.";
+            textarea.value = defaultInstruction;
+        }
+    });
+
+    demoSelect.addEventListener("change", updateDemoInfo);
+
+    exampleButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            textarea.value = button.dataset.text;
+        });
+    });
+</script>
+</body>
+</html>

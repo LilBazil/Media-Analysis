@@ -1,0 +1,7 @@
+flask
+pandas
+openpyxl
+matplotlib
+python-dotenv
+requests
+numpy

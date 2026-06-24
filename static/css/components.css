@@ -1,0 +1,320 @@
+.brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    color: #07101d;
+    font-weight: 900;
+}
+
+.brand-title {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.topbar-pill,
+.topbar-link,
+.model-pill,
+.warning-pill {
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--muted-2);
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.topbar-link:hover {
+    color: #07101d;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+}
+
+.hero-card,
+.preview-dashboard,
+.analysis-card,
+.card-dark,
+.info-card,
+.stat-card,
+.report-hero,
+.confirm-panel,
+.final-card {
+    border: 1px solid var(--border);
+    background: var(--card);
+    backdrop-filter: blur(18px);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.hero-badge {
+    display: inline-flex;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(146,254,157,0.16), rgba(0,201,255,0.14));
+    border: 1px solid rgba(146, 254, 157, 0.28);
+    color: #c7ffde;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.btn,
+.submit-button {
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 800;
+    border-radius: 18px;
+    transition: 0.18s ease;
+    font-family: inherit;
+}
+
+.btn {
+    padding: 14px 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary,
+.submit-button {
+    color: #07101d;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    box-shadow: 0 18px 40px rgba(0, 201, 255, 0.2);
+}
+
+.btn-secondary {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border);
+}
+
+.btn:hover,
+.submit-button:hover {
+    transform: translateY(-2px);
+}
+
+.submit-button {
+    width: 100%;
+    min-height: 62px;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+.submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.alert {
+    margin: 24px 0;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: rgba(255, 92, 122, 0.15);
+    border: 1px solid rgba(255, 92, 122, 0.35);
+    color: #ffd6de;
+}
+
+.warning-alert {
+    background: rgba(255, 209, 102, 0.12);
+    border-color: rgba(255, 209, 102, 0.28);
+    color: #fff2c7;
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin: 10px 0 18px;
+}
+
+.section-heading span {
+    width: 38px;
+    height: 38px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    color: #07101d;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    font-weight: 900;
+}
+
+.upload-zone {
+    display: grid;
+    place-items: center;
+    text-align: center;
+    min-height: 210px;
+    padding: 28px;
+    border-radius: 24px;
+    border: 1px dashed rgba(146, 254, 157, 0.45);
+    background:
+        linear-gradient(135deg, rgba(146,254,157,0.09), rgba(0,201,255,0.08)),
+        rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: 0.18s ease;
+}
+
+.upload-zone:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 201, 255, 0.72);
+}
+
+.upload-zone input {
+    display: none;
+}
+
+.upload-icon {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    border-radius: 22px;
+    font-size: 34px;
+    color: #07101d;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+    margin-bottom: 18px;
+}
+
+.switch-row {
+    margin: 16px 0;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    gap: 14px;
+    align-items: center;
+    padding: 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+}
+
+.switch-row input {
+    display: none;
+}
+
+.switch-fake {
+    width: 52px;
+    height: 30px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    position: relative;
+    transition: 0.2s;
+}
+
+.switch-fake::after {
+    content: "";
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: white;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    transition: 0.2s;
+}
+
+.switch-row input:checked + .switch-fake {
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+}
+
+.switch-row input:checked + .switch-fake::after {
+    left: 26px;
+    background: #07101d;
+}
+
+textarea {
+    width: 100%;
+    border: 1px solid var(--border);
+    outline: none;
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.55;
+    resize: vertical;
+}
+
+textarea:focus {
+    border-color: rgba(0,201,255,0.72);
+    box-shadow: 0 0 0 4px rgba(0,201,255,0.08);
+}
+
+.instruction-examples {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 14px 0 28px;
+}
+
+.instruction-examples button {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.06);
+    color: var(--muted-2);
+    border-radius: 999px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.instruction-examples button:hover {
+    color: #07101d;
+    background: linear-gradient(135deg, var(--accent-a), var(--accent-b));
+}
+
+.demo-dataset-box {
+    display: none;
+    margin: 0 0 18px;
+    padding: 18px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+}
+
+.demo-dataset-box label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--muted-2);
+    font-weight: 700;
+}
+
+.select-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    outline: none;
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: rgba(5, 9, 16, 0.75);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.select-input:focus {
+    border-color: rgba(0,201,255,0.72);
+    box-shadow: 0 0 0 4px rgba(0,201,255,0.08);
+}
+
+.demo-dataset-box p {
+    margin: 10px 0 0;
+    color: var(--muted);
+    line-height: 1.5;
+}

@@ -1,0 +1,113 @@
+@media (max-width: 1100px) {
+    .report-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .sidebar-title {
+        width: 100%;
+    }
+
+    .sidebar a {
+        margin: 0;
+    }
+}
+
+@media (max-width: 920px) {
+    .hero-grid,
+    .info-grid,
+    .hint-grid,
+    .stats-grid,
+    .confirm-panel,
+    .final-card {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-card,
+    .process-panel {
+        min-height: auto;
+    }
+
+    .hero-card {
+        padding: 30px;
+    }
+
+    .hero-metrics {
+        grid-template-columns: 1fr;
+    }
+
+    .topbar,
+    .card-header,
+    .report-hero {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .waiting-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .loading-head {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .loader.big {
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 760px) {
+    .result-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    h1 {
+        font-size: 38px;
+    }
+
+    .topbar {
+        align-items: stretch;
+    }
+
+    .brand {
+        align-items: flex-start;
+    }
+
+    .analysis-card,
+    .card-dark,
+    .hero-card,
+    .report-hero,
+    .confirm-panel,
+    .final-card,
+    .process-panel,
+    .loading-panel {
+        padding: 20px;
+    }
+
+    .process-panel h2,
+    .loading-head h2 {
+        font-size: 28px;
+    }
+
+    .process-step-card {
+        grid-template-columns: 1fr;
+    }
+
+    .details-title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .details-title span {
+        font-size: 22px;
+    }
+}
