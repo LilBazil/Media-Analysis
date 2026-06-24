@@ -19,7 +19,6 @@ vendor/
 passenger_error.log
 
 *.zip
-*.png
 
 .DS_Store
 Thumbs.db
