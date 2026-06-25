@@ -96,5 +96,5 @@ http://127.0.0.1:5000
 ![Ожидание анализа](screenshots/processing-page.png)
 
 
-## Результатом анализа
+## Результат анализа
 ![Результат анализа](screenshots/result-page.png)
